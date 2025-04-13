@@ -33,7 +33,7 @@ export class AuthController {
   async signup(@Body() createBodyDto: SignUpDto) {
     try {
       const result = await this.authService.signup(createBodyDto);
-      return ResponseDto.success({ refreshToken: result });
+      return ResponseDto.success({ activationToken: result });
     } catch (err) {
       return ResponseDto.throwError(err.message, err.status);
     }
