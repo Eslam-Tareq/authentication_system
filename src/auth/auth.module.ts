@@ -7,6 +7,8 @@ import { User, UserSchema } from 'src/user/user.schema';
 import { ActivationCodeHelper } from './helpers/activation-code.helper';
 import { MailHelper } from './helpers/mail.helper';
 import { PasswordResetCodeHelper } from './helpers/password-code.helper';
+import { TokenService } from 'src/jwt/jwt.service';
+import { GoogleAuthService } from 'src/google/google.service';
 @Module({
   imports: [
     UserModule,
@@ -17,6 +19,8 @@ import { PasswordResetCodeHelper } from './helpers/password-code.helper';
     ActivationCodeHelper,
     MailHelper,
     PasswordResetCodeHelper,
+    TokenService,
+    GoogleAuthService,
   ],
   controllers: [AuthController],
 })

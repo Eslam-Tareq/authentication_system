@@ -2,13 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { MailHelper } from './mail.helper';
 import { UserDocument } from 'src/user/user.schema';
 import { generateCode, sha256Hashing } from './code.helper';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class PasswordResetCodeHelper {
   constructor(private readonly mailHelper: MailHelper) {}
   async generateAndSendPasswordResetEmail(user: UserDocument) {
-    const { passwordResetVerificationToken, code } =
-      this.generateCodeVerificationDetails(user);
+    const code = generateCode();
+    const passwordResetVerificationToken = crypto
+      .randomBytes(32)
+      .toString('hex');
+
     const hashedCode = sha256Hashing(code);
     const hashedToken = sha256Hashing(passwordResetVerificationToken);
     await this.persistPasswordResetDetails(user, hashedCode, hashedToken);
@@ -37,12 +41,6 @@ export class PasswordResetCodeHelper {
       await this.safeResetPasswordResetFields(user);
       throw new BadRequestException('Failed to send PasswordReset email');
     }
-  }
-
-  generateCodeVerificationDetails(user: UserDocument) {
-    const code = generateCode();
-    const passwordResetVerificationToken = `${user.email + code}`;
-    return { passwordResetVerificationToken, code };
   }
 
   async persistPasswordResetDetails(

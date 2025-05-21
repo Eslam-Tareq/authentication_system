@@ -9,29 +9,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { GoogleModule } from './google/google.module';
+import { JWTModule } from './jwt/jwt.module';
+import { NodeMailer } from './config/node-mailer.config';
+import { MongodbModule } from './config/mongodb.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DATA_BASE),
-    JwtModule.register({
-      secret: 'my ser',
-      global: true,
-      signOptions: { expiresIn: '90d' },
-    }),
+    MongodbModule,
     UserModule,
     AuthModule,
-    MailerModule.forRoot({
-      transport: {
-        service: 'Gmail',
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: process.env.GMAIL_EMAIL,
-          pass: process.env.GMAIL_APP_PASSWORD,
-        },
-      },
-    }),
+    GoogleModule,
+    JWTModule,
+    NodeMailer,
   ],
   controllers: [AppController],
   providers: [

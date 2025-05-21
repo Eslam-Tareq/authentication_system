@@ -16,11 +16,12 @@ import { ActivationCodeHelper } from './helpers/activation-code.helper';
 import { resettingUserCodeFields, sha256Hashing } from './helpers/code.helper';
 import { PasswordResetCodeHelper } from './helpers/password-code.helper';
 import { hashingPassword, isCorrectPassword } from './helpers/password.helper';
+import { TokenService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly jwtService: JwtService,
+    private readonly jwtService: TokenService,
     @InjectModel(User.name)
     private UserModel: Model<User>,
     private readonly activationCodeHelper: ActivationCodeHelper,
@@ -85,7 +86,8 @@ export class AuthService {
         await this.activationCodeHelper.generateAndSendActivation(user),
       ];
     } else {
-      return [true, this.jwtService.sign({ userId: user._id }), user];
+      const accessToken = this.jwtService.generateAccessToken(user);
+      return [true, accessToken, user];
     }
   }
 

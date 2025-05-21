@@ -7,7 +7,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -23,7 +22,7 @@ export class AuthGuard implements CanActivate {
       request.headers.authorization &&
       request.headers.authorization.startsWith('Bearer')
     ) {
-      token = request.headers.authorization.split(' ')[0];
+      token = request.headers.authorization.split(' ')[1];
     } else {
       token = request.cookies.accessToken;
     }
@@ -36,7 +35,7 @@ export class AuthGuard implements CanActivate {
     } catch (err) {
       return false;
     }
-    const user = await this.userService.getById(decoded!.userId);
+    const user = await this.userService.getById(decoded!._id);
     if (!user) {
       return false;
     }

@@ -22,10 +22,14 @@ export class User {
   email: String;
   @Prop({
     type: String,
-    required: [true, 'user must have a password'],
+    required: function () {
+      return !this.googleId;
+    },
     minlength: [6, 'password must have at least 8 characters'],
   })
   password: string;
+  @Prop()
+  googleId: string;
   @Prop()
   passwordChangedAt: Date;
   @Prop()
